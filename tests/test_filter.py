@@ -434,7 +434,7 @@ class TestFileFilterClassify:
         ff = FileFilter({"include_patterns": ["*.mp4", "*.mkv"]})
         assert ff.classify("video.mp4") == "process"
         assert ff.classify("video.mkv") == "process"
-        assert ff.classify("video.avi") == "reject"
+        assert ff.classify("video.avi") == "skip"
 
     def test_include_matches_files_in_subdirs(self):
         ff = FileFilter({"include_patterns": ["*.mp4"]})
@@ -444,31 +444,31 @@ class TestFileFilterClassify:
         ff = FileFilter({"include_patterns": ["alpha/*"]})
         assert ff.classify("alpha/video.mp4") == "process"
         assert ff.classify("alpha/sub/deep/video.mp4") == "process"
-        assert ff.classify("beta/video.mp4") == "reject"
+        assert ff.classify("beta/video.mp4") == "skip"
 
     def test_include_directory_prefix_pattern(self):
         ff = FileFilter({"include_patterns": ["bravo*/*"]})
         assert ff.classify("bravo/video.mp4") == "process"
         assert ff.classify("bravo-2/video.mp4") == "process"
-        assert ff.classify("charlie/video.mp4") == "reject"
+        assert ff.classify("charlie/video.mp4") == "skip"
 
     def test_include_substring_pattern(self):
         ff = FileFilter({"include_patterns": ["*charlie*.mp4"]})
         assert ff.classify("my-charlie-video.mp4") == "process"
         assert ff.classify("sub/charlie.mp4") == "process"
-        assert ff.classify("charlie.mkv") == "reject"
+        assert ff.classify("charlie.mkv") == "skip"
 
     def test_exclude_overrides_include(self):
         ff = FileFilter(
             {"include_patterns": ["*.mp4"], "exclude_patterns": ["*sample*"]}
         )
         assert ff.classify("video.mp4") == "process"
-        assert ff.classify("video-sample.mp4") == "reject"
+        assert ff.classify("video-sample.mp4") == "skip"
 
     def test_exclude_without_include(self):
         ff = FileFilter({"exclude_patterns": ["*.tmp"]})
         assert ff.classify("video.mp4") == "process"
-        assert ff.classify("video.tmp") == "reject"
+        assert ff.classify("video.tmp") == "skip"
 
     def test_passthrough_match(self):
         ff = FileFilter({"passthrough_patterns": ["*.txt", "*.srt"]})
@@ -486,14 +486,14 @@ class TestFileFilterClassify:
         )
         assert ff.classify("alpha/video.mp4") == "process"
         assert ff.classify("alpha/notes.txt") == "passthrough"
-        assert ff.classify("alpha/cache.tmp") == "reject"
-        assert ff.classify("beta/notes.txt") == "reject"
+        assert ff.classify("alpha/cache.tmp") == "skip"
+        assert ff.classify("beta/notes.txt") == "skip"
 
     def test_exclude_takes_priority_over_passthrough(self):
         ff = FileFilter(
             {"exclude_patterns": ["*.txt"], "passthrough_patterns": ["*.txt"]}
         )
-        assert ff.classify("notes.txt") == "reject"
+        assert ff.classify("notes.txt") == "skip"
 
     def test_case_insensitive(self):
         ff = FileFilter({"include_patterns": ["*.MP4", "Alpha/*"]})

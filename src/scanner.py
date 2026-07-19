@@ -47,7 +47,7 @@ class Scanner:
                 rel_path = os.path.relpath(filepath, source_dir)
 
                 classification = file_filter.classify(rel_path)
-                if classification == "reject":
+                if classification == "skip":
                     logger.debug(
                         f"【{task_name}】跳过 {rel_path}，原因: 文件名不匹配过滤规则"
                     )

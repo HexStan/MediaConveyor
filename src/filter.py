@@ -106,16 +106,16 @@ class FileFilter:
         """
         根据相对路径判断文件分类（不区分大小写，路径分隔符统一为 '/'）。
         流水线: include -> exclude -> passthrough。
-        返回 'reject'（跳过）、'passthrough'（直接移动）或 'process'（需要处理）。
+        返回 'skip'（跳过）、'passthrough'（直接移动）或 'process'（需要处理）。
         """
         rel_path = rel_path.replace("\\", "/").lower()
 
         if self.include_patterns and not self._match_patterns(
             rel_path, self.include_patterns
         ):
-            return "reject"
+            return "skip"
         if self._match_patterns(rel_path, self.exclude_patterns):
-            return "reject"
+            return "skip"
         if self._match_patterns(rel_path, self.passthrough_patterns):
             return "passthrough"
         return "process"

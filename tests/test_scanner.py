@@ -87,7 +87,7 @@ class TestScanner:
         report = scanner.scan(tc, sm, mock_logger)
         assert report.entries == []
 
-    def test_rejected_file_skipped(self, scanner, mock_logger, temp_dir):
+    def test_file_skipped(self, scanner, mock_logger, temp_dir):
         from src.filter import FileFilter
 
         ff = FileFilter({"include_patterns": ["*.mp4"]})
