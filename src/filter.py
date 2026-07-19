@@ -98,6 +98,63 @@ class FileFilter:
             return val.get(boundary, 0)
         return 0
 
+    @staticmethod
+    def _match_patterns(rel_path, patterns):
+        return any(fnmatch.fnmatchcase(rel_path, p) for p in patterns)
+
+    def classify(self, rel_path):
+        """
+        根据相对路径判断文件分类（不区分大小写，路径分隔符统一为 '/'）。
+        流水线: include -> exclude -> passthrough。
+        返回 'reject'（跳过）、'passthrough'（直接移动）或 'process'（需要处理）。
+        """
+        rel_path = rel_path.replace("\\", "/").lower()
+
+        if self.include_patterns and not self._match_patterns(
+            rel_path, self.include_patterns
+        ):
+            return "reject"
+        if self._match_patterns(rel_path, self.exclude_patterns):
+            return "reject"
+        if self._match_patterns(rel_path, self.passthrough_patterns):
+            return "passthrough"
+        return "process"
+
+    def check_mtime(self, mtime, current_time):
+        """
+        检查文件修改时间是否满足阈值条件。
+        mtime: 文件的实际修改时间戳
+        current_time: 当前时间戳
+        返回 True 表示通过（文件已稳定），False 表示应跳过。
+        """
+        if self.file_mtime <= 0:
+            return True
+        return (current_time - mtime) >= self.file_mtime
+    
+    def requires_media_info(self):
+        """
+        判断是否配置了需要 ffprobe 才能获取到的条件（即 size 和 mtime 以外的条件）
+        如果只需要 size，就不用调用 ffprobe。
+        """
+        return any(
+            [
+                self.duration_min > 0,
+                self.duration_max > 0,
+                self.t_bitrate_min > 0,
+                self.t_bitrate_max > 0,
+                self.v_bitrate_min > 0,
+                self.v_bitrate_max > 0,
+                self.a_bitrate_min > 0,
+                self.a_bitrate_max > 0,
+                self.framerate_min > 0,
+                self.framerate_max > 0,
+                self.short_side_min > 0,
+                self.short_side_max > 0,
+                self.exclude_vcodecs,
+                self.exclude_acodecs,
+            ]
+        )
+    
     def match(self, media_info, logger=None, rel_path="", task_name=""):
         if self.size_min > 0 and media_info["size"] < self.size_min:
             if logger:
@@ -211,60 +268,3 @@ class FileFilter:
             return False
 
         return True
-
-    def requires_media_info(self):
-        """
-        判断是否配置了需要 ffprobe 才能获取到的条件（即 size 和 mtime 以外的条件）
-        如果只需要 size，就不用调用 ffprobe。
-        """
-        return any(
-            [
-                self.duration_min > 0,
-                self.duration_max > 0,
-                self.t_bitrate_min > 0,
-                self.t_bitrate_max > 0,
-                self.v_bitrate_min > 0,
-                self.v_bitrate_max > 0,
-                self.a_bitrate_min > 0,
-                self.a_bitrate_max > 0,
-                self.framerate_min > 0,
-                self.framerate_max > 0,
-                self.short_side_min > 0,
-                self.short_side_max > 0,
-                self.exclude_vcodecs,
-                self.exclude_acodecs,
-            ]
-        )
-
-    @staticmethod
-    def _match_patterns(rel_path, patterns):
-        return any(fnmatch.fnmatchcase(rel_path, p) for p in patterns)
-
-    def classify(self, rel_path):
-        """
-        根据相对路径判断文件分类（不区分大小写，路径分隔符统一为 '/'）。
-        流水线: include -> exclude -> passthrough。
-        返回 'reject'（跳过）、'passthrough'（直接移动）或 'process'（需要处理）。
-        """
-        rel_path = rel_path.replace("\\", "/").lower()
-
-        if self.include_patterns and not self._match_patterns(
-            rel_path, self.include_patterns
-        ):
-            return "reject"
-        if self._match_patterns(rel_path, self.exclude_patterns):
-            return "reject"
-        if self._match_patterns(rel_path, self.passthrough_patterns):
-            return "passthrough"
-        return "process"
-
-    def check_mtime(self, mtime, current_time):
-        """
-        检查文件修改时间是否满足阈值条件。
-        mtime: 文件的实际修改时间戳
-        current_time: 当前时间戳
-        返回 True 表示通过（文件已稳定），False 表示应跳过。
-        """
-        if self.file_mtime <= 0:
-            return True
-        return (current_time - mtime) >= self.file_mtime
