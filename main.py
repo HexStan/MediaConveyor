@@ -4,7 +4,7 @@ import time
 from src.config import Config
 from src.db_manager import DBManager
 from src.logger import setup_logger
-from src.processor import process_file, cleanup_expired_files
+from src.processor import cleanup_expired_files, process_file
 from src.scanner import Scanner
 
 try:
@@ -14,7 +14,7 @@ try:
 except ImportError:
     HAS_FCNTL = False
 
-LOCK_FILE = "/tmp/video_watchdog.lock"
+LOCK_FILE = "/tmp/media_conveyor.lock"
 
 
 def acquire_lock():
@@ -83,7 +83,7 @@ def main():
     scanner = Scanner()
     tasks = config.tasks
 
-    logger.info("VideoWatchdog 已启动。")
+    logger.info("MediaConveyor 已启动。")
 
     scan_interval = global_cfg.get("scan_interval", 0)
     monitoring_logged = set()
@@ -101,7 +101,7 @@ def main():
             )
         logger.info("所有任务完成。")
     else:
-        logger.info("VideoWatchdog 已进入监听模式。")
+        logger.info("MediaConveyor 已进入监听模式。")
         try:
             while True:
                 for task_config in tasks:
@@ -115,7 +115,7 @@ def main():
                     )
                 time.sleep(scan_interval)
         except KeyboardInterrupt:
-            logger.info("VideoWatchdog 接收到退出信号，正在退出……")
+            logger.info("MediaConveyor 接收到退出信号，正在退出……")
 
 
 if __name__ == "__main__":

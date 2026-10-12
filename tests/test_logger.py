@@ -15,7 +15,7 @@ class TestDailyRotatingFileHandler:
     def test_init_creates_handler(self, temp_dir):
         handler = DailyRotatingFileHandler(temp_dir, 7)
         today = datetime.now().strftime("%Y%m%d")
-        # expected_filename = os.path.join(temp_dir, f"videowatchdog-{today}.log")
+        # expected_filename = os.path.join(temp_dir, f"mediaconveyor-{today}.log")
         assert handler.current_date == today
         assert handler.max_log_files == 7
         handler.close()
@@ -35,7 +35,7 @@ class TestDailyRotatingFileHandler:
         today = datetime.now().strftime("%Y%m%d")
 
         yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
-        yesterday_file = os.path.join(temp_dir, f"videowatchdog-{yesterday}.log")
+        yesterday_file = os.path.join(temp_dir, f"mediaconveyor-{yesterday}.log")
         with open(yesterday_file, "w") as f:
             f.write("old log")
 
@@ -52,7 +52,7 @@ class TestDailyRotatingFileHandler:
     def test_cleanup_triggered_on_rotation(self, temp_dir):
         handler = DailyRotatingFileHandler(temp_dir, 2)
         yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
-        yesterday_file = os.path.join(temp_dir, f"videowatchdog-{yesterday}.log")
+        yesterday_file = os.path.join(temp_dir, f"mediaconveyor-{yesterday}.log")
         with open(yesterday_file, "w") as f:
             f.write("old log")
 
@@ -77,7 +77,7 @@ class TestSetupLogger:
     def test_returns_logger_instance(self, temp_dir):
         logger = setup_logger(temp_dir, 7, "INFO")
         assert isinstance(logger, logging.Logger)
-        assert logger.name == "VideoWatchdog"
+        assert logger.name == "MediaConveyor"
         for handler in logger.handlers:
             handler.close()
 
@@ -119,13 +119,13 @@ class TestCleanupOldLogs:
     def test_keeps_within_limit(self, temp_dir):
         for i in range(5):
             date = (datetime.now() - timedelta(days=i)).strftime("%Y%m%d")
-            path = os.path.join(temp_dir, f"videowatchdog-{date}.log")
+            path = os.path.join(temp_dir, f"mediaconveyor-{date}.log")
             with open(path, "w") as f:
                 f.write("log")
 
         _cleanup_old_logs(temp_dir, 3)
 
-        log_files = glob.glob(os.path.join(temp_dir, "videowatchdog-*.log"))
+        log_files = glob.glob(os.path.join(temp_dir, "mediaconveyor-*.log"))
         assert len(log_files) <= 3
 
     def test_removes_oldest_first(self, temp_dir):
@@ -133,16 +133,16 @@ class TestCleanupOldLogs:
         for i in range(5):
             date = (datetime.now() - timedelta(days=5 - i)).strftime("%Y%m%d")
             dates.append(date)
-            path = os.path.join(temp_dir, f"videowatchdog-{date}.log")
+            path = os.path.join(temp_dir, f"mediaconveyor-{date}.log")
             with open(path, "w") as f:
                 f.write("log")
 
         _cleanup_old_logs(temp_dir, 2)
 
-        log_files = glob.glob(os.path.join(temp_dir, "videowatchdog-*.log"))
+        log_files = glob.glob(os.path.join(temp_dir, "mediaconveyor-*.log"))
         assert len(log_files) == 2
         remaining_dates = [
-            os.path.basename(f).replace("videowatchdog-", "").replace(".log", "")
+            os.path.basename(f).replace("mediaconveyor-", "").replace(".log", "")
             for f in log_files
         ]
         assert dates[-1] in remaining_dates
@@ -151,32 +151,32 @@ class TestCleanupOldLogs:
     def test_exactly_at_limit_no_deletion(self, temp_dir):
         for i in range(3):
             date = (datetime.now() - timedelta(days=i)).strftime("%Y%m%d")
-            path = os.path.join(temp_dir, f"videowatchdog-{date}.log")
+            path = os.path.join(temp_dir, f"mediaconveyor-{date}.log")
             with open(path, "w") as f:
                 f.write("log")
 
         _cleanup_old_logs(temp_dir, 3)
 
-        log_files = glob.glob(os.path.join(temp_dir, "videowatchdog-*.log"))
+        log_files = glob.glob(os.path.join(temp_dir, "mediaconveyor-*.log"))
         assert len(log_files) == 3
 
     def test_max_zero_deletes_all(self, temp_dir):
         for i in range(3):
             date = (datetime.now() - timedelta(days=i)).strftime("%Y%m%d")
-            path = os.path.join(temp_dir, f"videowatchdog-{date}.log")
+            path = os.path.join(temp_dir, f"mediaconveyor-{date}.log")
             with open(path, "w") as f:
                 f.write("log")
 
         _cleanup_old_logs(temp_dir, 0)
 
-        log_files = glob.glob(os.path.join(temp_dir, "videowatchdog-*.log"))
+        log_files = glob.glob(os.path.join(temp_dir, "mediaconveyor-*.log"))
         assert len(log_files) == 0
 
     def test_invalid_filename_handled_gracefully(self, temp_dir):
         valid_date = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
-        with open(os.path.join(temp_dir, f"videowatchdog-{valid_date}.log"), "w") as f:
+        with open(os.path.join(temp_dir, f"mediaconveyor-{valid_date}.log"), "w") as f:
             f.write("log")
-        with open(os.path.join(temp_dir, "videowatchdog-invalid-date.log"), "w") as f:
+        with open(os.path.join(temp_dir, "mediaconveyor-invalid-date.log"), "w") as f:
             f.write("log")
 
         _cleanup_old_logs(temp_dir, 3)
@@ -184,7 +184,7 @@ class TestCleanupOldLogs:
     def test_oserror_during_removal_handled(self, temp_dir):
         for i in range(5):
             date = (datetime.now() - timedelta(days=5 - i)).strftime("%Y%m%d")
-            path = os.path.join(temp_dir, f"videowatchdog-{date}.log")
+            path = os.path.join(temp_dir, f"mediaconveyor-{date}.log")
             with open(path, "w") as f:
                 f.write("log")
 

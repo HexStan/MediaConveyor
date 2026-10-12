@@ -6,7 +6,7 @@ from src.db_manager import DBManager
 
 class TestDBManagerInit:
     def test_default_path_creates_db(self, temp_dir):
-        db_path = os.path.join(temp_dir, "video-watchdog.db")
+        db_path = os.path.join(temp_dir, "media-conveyor.db")
         DBManager(db_path)
         assert os.path.exists(db_path)
 
@@ -17,7 +17,7 @@ class TestDBManagerInit:
         assert sm.get_success_time("/test/file2.mp4") == 1234567890.0
 
     def test_creates_parent_dirs(self, temp_dir):
-        deep_path = os.path.join(temp_dir, "deep", "nested", "video-watchdog.db")
+        deep_path = os.path.join(temp_dir, "deep", "nested", "media-conveyor.db")
         DBManager(deep_path)
         assert os.path.exists(deep_path)
 

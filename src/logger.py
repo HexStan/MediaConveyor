@@ -13,7 +13,7 @@ class DailyRotatingFileHandler(logging.FileHandler):
         self.log_dir = log_dir
         self.max_log_files = max_log_files
         self.current_date = datetime.now().strftime("%Y%m%d")
-        filename = os.path.join(log_dir, f"videowatchdog-{self.current_date}.log")
+        filename = os.path.join(log_dir, f"mediaconveyor-{self.current_date}.log")
         super().__init__(filename, encoding=encoding)
 
     def emit(self, record):
@@ -22,7 +22,7 @@ class DailyRotatingFileHandler(logging.FileHandler):
             self.current_date = new_date
             self.close()
             filename = os.path.join(
-                self.log_dir, f"videowatchdog-{self.current_date}.log"
+                self.log_dir, f"mediaconveyor-{self.current_date}.log"
             )
             self.baseFilename = os.path.abspath(filename)
             self.stream = self._open()
@@ -38,7 +38,7 @@ def setup_logger(log_dir="logs", max_log_files=7, log_level="INFO"):
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 
-    logger = logging.getLogger("VideoWatchdog")
+    logger = logging.getLogger("MediaConveyor")
     logger.setLevel(getattr(logging, log_level.upper(), logging.INFO))
 
     # 避免重复添加 handler
@@ -69,14 +69,14 @@ def setup_logger(log_dir="logs", max_log_files=7, log_level="INFO"):
 
 def _cleanup_old_logs(log_dir, max_log_files):
     try:
-        log_files = glob.glob(os.path.join(log_dir, "videowatchdog-*.log"))
+        log_files = glob.glob(os.path.join(log_dir, "mediaconveyor-*.log"))
 
         # 提取文件名中的日期并排序
         def get_date_from_filename(filepath):
             filename = os.path.basename(filepath)
-            # 假设文件名格式为 videowatchdog-YYYYMMDD.log
+            # 假设文件名格式为 mediaconveyor-YYYYMMDD.log
             try:
-                date_str = filename.replace("videowatchdog-", "").replace(".log", "")
+                date_str = filename.replace("mediaconveyor-", "").replace(".log", "")
                 return datetime.strptime(date_str, "%Y%m%d")
             except ValueError:
                 # 如果解析失败，返回一个很早的时间

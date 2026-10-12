@@ -1,8 +1,8 @@
-# VideoWatchdog
+# MediaConveyor
 
 [English](README_EN.md) | 中文
 
-**VideoWatchdog** 是一个基于 Python 的轻量级自动化工具，用于监听指定目录中的音视频文件，并在文件写入完成后自动调用 FFmpeg 进行处理。它非常适合需要自动化音视频转码、压缩或格式转换的场景。
+**MediaConveyor** 是一个基于 Python 的轻量级自动化工具，用于监听指定目录中的音视频文件，并在文件写入完成后自动调用 FFmpeg 进行处理。它非常适合需要自动化音视频转码、压缩或格式转换的场景。
 
 📝 [更新日志](./CHANGELOG.md)
 
@@ -31,8 +31,8 @@
 
 1. **克隆仓库**
    ```bash
-   git clone https://github.com/yourusername/VideoWatchdog.git
-   cd VideoWatchdog
+   git clone https://github.com/HexStan/MediaConveyor.git
+   cd MediaConveyor
    ```
 2. **安装 Python 依赖**
    ```bash

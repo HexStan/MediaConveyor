@@ -74,12 +74,12 @@ ffmpeg_cmd = "ffmpeg -i {input} {output}.mp4"
 
 @pytest.fixture
 def sample_db(temp_dir):
-    return os.path.join(temp_dir, "video-watchdog.db")
+    return os.path.join(temp_dir, "media-conveyor.db")
 
 
 @pytest.fixture
 def sample_db_with_data(temp_dir):
-    path = os.path.join(temp_dir, "video-watchdog.db")
+    path = os.path.join(temp_dir, "media-conveyor.db")
     conn = sqlite3.connect(path)
     conn.execute(
         "CREATE TABLE IF NOT EXISTS file_state ("

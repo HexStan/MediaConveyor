@@ -3,7 +3,7 @@ import sqlite3
 
 
 class DBManager:
-    def __init__(self, db_path="data/video-watchdog.db"):
+    def __init__(self, db_path="data/media-conveyor.db"):
         self.db_path = db_path
 
         db_dir = os.path.dirname(self.db_path)

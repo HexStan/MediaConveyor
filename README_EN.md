@@ -1,8 +1,8 @@
-# VideoWatchdog
+# MediaConveyor
 
 English | [中文](README.md)
 
-**VideoWatchdog** is a lightweight, Python-based automation tool designed to monitor specified directories for audio and video files and automatically process them using FFmpeg once they are fully written. It is ideal for scenarios requiring automated audio and video transcoding, compression, or format conversion.
+**MediaConveyor** is a lightweight, Python-based automation tool designed to monitor specified directories for audio and video files and automatically process them using FFmpeg once they are fully written. It is ideal for scenarios requiring automated audio and video transcoding, compression, or format conversion.
 
 📝 [Changelog](./CHANGELOG.md)
 
@@ -31,8 +31,8 @@ This project is inspired by the `autovideoconverter` feature in the [jlesage/doc
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/yourusername/VideoWatchdog.git
-   cd VideoWatchdog
+   git clone https://github.com/HexStan/MediaConveyor.git
+   cd MediaConveyor
    ```
 
 2. **Install Python Dependencies**
