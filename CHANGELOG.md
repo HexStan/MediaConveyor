@@ -6,7 +6,6 @@
 
 ### 新增
 
-- 自动数据迁移系统：首次启动时自动检测旧版用户数据（v1 至 v4）并迁移，无需手动操作。迁移范围包括状态数据和配置文件字段。
 - 基于 fnmatch 模式的文件过滤流水线（`[tasks.filter]`）：
   - `include_patterns`：指定要识别的文件，不填或为空则包含所有文件。
   - `exclude_patterns`：匹配到的文件将被跳过。
@@ -26,17 +25,17 @@
 
 - 状态文件路径变更：`logs/state.json` → `data/` 目录下的 SQLite 数据库。
 - Docker 用户需在 `docker-compose.yml` 中新增 `./data:/app/data` 卷挂载，以确保数据库文件持久化。
-- 文件过滤配置从扩展名列表（`input_formats`/`direct_move_formats`）改为 fnmatch 模式列表（`include_patterns`/`exclude_patterns`/`passthrough_patterns`）。旧配置项在首次启动时会自动迁移，但默认过滤行为发生变化（见迁移指南）。
+- 文件过滤配置从扩展名列表（`input_formats`/`direct_move_formats`）改为 fnmatch 模式列表（`include_patterns`/`exclude_patterns`/`passthrough_patterns`）。旧配置项不会自动迁移，需手动转换（见迁移指南）。
 
-### 迁移指南（v4.0.0 -> 未发布）
+### 迁移指南（v4.x -> 未发布）
 
 #### 1. 状态存储迁移
 
-状态数据会自动从旧版 JSON 格式迁移至 SQLite，无需手动干预。首次启动时程序会自动完成迁移。
+本版本不再提供自动数据迁移。v4.x 及更早版本的 JSON 状态数据（`logs/state.json`）不会迁移至 SQLite，首次启动时视为全新状态，所有文件将被重新扫描，此前的失败计数与处理成功时间记录将丢失。
 
 #### 2. 文件过滤配置迁移
 
-首次启动时，旧的扩展名配置会自动转换为等效的 fnmatch 模式：
+旧配置不会自动转换，请参考以下对照关系手动修改：
 
 ```toml
 # v4.0.0
@@ -44,14 +43,14 @@
 input_formats = ["mp4", "mkv"]
 direct_move_formats = ["srt"]
 
-# 自动迁移后
+# 手动转换后
 [tasks.filter]
 include_patterns = ["*.mp4", "*.mkv"]
 exclude_patterns = []
 passthrough_patterns = ["*.srt"]
 ```
 
-**注意默认行为变化**：如果旧配置未显式设置 `input_formats`（旧版默认仅处理 `.mp4` 文件），迁移后 `include_patterns` 为空，程序将处理源目录中的**所有文件**。如需保持原行为，请手动添加：
+**注意默认行为变化**：如果旧配置未显式设置 `input_formats`（旧版默认仅处理 `.mp4` 文件），转换后 `include_patterns` 为空，程序将处理源目录中的**所有文件**。如需保持原行为，请手动添加：
 
 ```toml
 [tasks.filter]
@@ -68,6 +67,12 @@ volumes:
   - ./data:/app/data      # 新增此行
   - ./logs:/app/logs
 ```
+
+---
+
+## 旧版本号体系（v1.0.0 – v4.0.0）
+
+> **注**：项目版本号已于 2026-10 重置，自 `0.7.0-dev` 起采用新的版本号体系重新开始迭代。以下 v1.0.0 至 v4.0.0 为旧版本号体系下的历史记录，与当前版本体系不连续；对应的 Tag 与 GitHub Release 已一并清理归档。
 
 ---
 

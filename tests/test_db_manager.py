@@ -23,10 +23,6 @@ class TestDBManagerInit:
 
 
 class TestDBManagerGetVersion:
-    def test_new_db_auto_detects_version(self, sample_db):
-        sm = DBManager(sample_db)
-        assert sm.get_version() >= 1
-
     def test_set_and_get_version(self, sample_db):
         sm = DBManager(sample_db)
         sm.set_version(5)

@@ -27,28 +27,6 @@ class DBManager:
         )
         self._conn.commit()
 
-        self._ensure_migrated()
-
-    def _ensure_migrated(self):
-        from scripts.migrations.detector import (
-            check_and_migrate,
-            detect_version,
-            read_version_major,
-        )
-
-        row = self._conn.execute(
-            "SELECT value FROM meta WHERE key = 'user_data_version'"
-        ).fetchone()
-
-        if row:
-            current_version = int(row[0])
-        else:
-            current_version = detect_version(self.db_path)
-            self.set_version(current_version)
-
-        if current_version < read_version_major():
-            check_and_migrate(self.db_path, current_version)
-
     def get_failure_count(self, filepath):
         row = self._conn.execute(
             "SELECT failure_count FROM file_state WHERE filepath = ?", (filepath,)
