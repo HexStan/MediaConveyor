@@ -47,7 +47,7 @@ python main.py                    # 必须在仓库根目录运行
 
 - CI 有两个工作流：
   - `.github/workflows/tests.yml`：在 ubuntu + windows、Python 3.11–3.14 上运行 `pytest`。
-  - `.github/workflows/version-release.yml`：发布时构建 Docker 镜像（详见 RELEASE-GUIDE.md）。
+  - `.github/workflows/docker-publish.yml`：发布时构建并推送 Docker 镜像（详见 RELEASE-GUIDE.md）。
 - 没有配置任何 linter、formatter 或 typechecker —— `pytest` 是唯一的自动化检查。
 - 代码必须保持跨平台；Docker 运行环境是基于 Debian 的，带 GPU/VAAPI 驱动。
 
