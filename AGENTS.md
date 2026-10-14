@@ -59,7 +59,6 @@ python main.py                    # 必须在仓库根目录运行
 
 ## 约定
 
-- 默认分支为 `dev`；CI 在 `master` 和 `dev` 上都会运行。
 - 提交信息使用 Conventional Commits 前缀（`feat:`、`fix:`、`refactor(scope):`、`chore!:` 表破坏性变更），描述用中文，如 `feat(tasks): 引入基于 fnmatch 的文件过滤流水线`。
 - 面向用户的字符串 —— 日志、错误信息、README —— 用中文；测试和 CI 用英文。遵循这一分工。
 - README.md 是 `config.toml` 的中文配置向导；新增配置项时，需同时更新 README.md 和 `config/config.example.toml`。
