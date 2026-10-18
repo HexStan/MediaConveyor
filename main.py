@@ -25,10 +25,11 @@ def acquire_lock():
         return None
 
     try:
-        lock_fd = open(LOCK_FILE, "w")
+        # 锁文件句柄需在整个运行期保持打开以持有 flock，因此刻意不使用上下文管理器
+        lock_fd = open(LOCK_FILE, "w")  # noqa: SIM115
         fcntl.flock(lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
         return lock_fd
-    except IOError:
+    except OSError:
         print("另一个实例正在运行，已退出。")
         sys.exit(1)
 
@@ -65,7 +66,8 @@ def main():
 
     try:
         config = Config()
-    except Exception as e:
+    except (OSError, ValueError) as e:
+        # 涵盖配置文件缺失/不可读、TOML 解析错误以及配置校验失败
         print(f"加载配置失败，原因:\n{e}")
         sys.exit(1)
 

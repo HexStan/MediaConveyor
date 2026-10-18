@@ -1,3 +1,4 @@
+import contextlib
 import glob
 import logging
 import os
@@ -68,7 +69,9 @@ def setup_logger(log_dir="logs", max_log_files=7, log_level="INFO"):
 
 
 def _cleanup_old_logs(log_dir, max_log_files):
-    try:
+    # 日志清理是尽力而为的辅助操作，任何失败都必须被静默忽略：
+    # 该函数可能在 handler emit 期间被调用，此时若再写日志会引发递归
+    with contextlib.suppress(Exception):
         log_files = glob.glob(os.path.join(log_dir, "mediaconveyor-*.log"))
 
         # 提取文件名中的日期并排序
@@ -91,5 +94,3 @@ def _cleanup_old_logs(log_dir, max_log_files):
                 os.remove(oldest_file)
             except OSError:
                 pass
-    except Exception:
-        pass

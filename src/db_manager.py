@@ -1,3 +1,4 @@
+import contextlib
 import os
 import sqlite3
 
@@ -93,10 +94,9 @@ class DBManager:
         self._conn.commit()
 
     def close(self):
-        try:
+        # 连接已关闭等异常可安全忽略
+        with contextlib.suppress(sqlite3.Error):
             self._conn.close()
-        except Exception:
-            pass
 
     def __del__(self):
         self.close()

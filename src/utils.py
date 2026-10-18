@@ -1,6 +1,6 @@
+import json
 import os
 import subprocess
-import json
 
 
 def get_media_info(filepath):
@@ -51,7 +51,7 @@ def get_media_info(filepath):
     ]
     try:
         result = subprocess.run(
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=15
+            cmd, capture_output=True, text=True, timeout=15, check=False
         )
         if result.returncode == 0:
             data = json.loads(result.stdout)
@@ -101,7 +101,9 @@ def get_media_info(filepath):
                             info["audio_bitrate"] = float(stream["bit_rate"])
                         except ValueError:
                             pass
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
+        # 兜底捕获：ffprobe 的任何异常（缺失、超时、输出异常）都不允许向上抛出，
+        # 必须降级为全零默认值
         print(f"Error fetching media info with ffprobe: {e}")
 
     return info

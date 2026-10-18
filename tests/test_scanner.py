@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.scanner import ScanEntry, ScanReport, Scanner
+from src.scanner import ScanEntry, Scanner, ScanReport
 from src.task_config import TaskConfig
 
 

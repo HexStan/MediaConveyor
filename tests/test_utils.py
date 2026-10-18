@@ -6,7 +6,6 @@ import pytest
 
 from src.utils import clean_empty_dirs, get_media_duration, get_media_info
 
-
 FFPROBE_OUTPUT = {
     "format": {
         "duration": "120.5",
@@ -164,10 +163,10 @@ class TestGetMediaInfo:
         with (
             patch("os.path.exists", return_value=True),
             patch("os.path.getsize", side_effect=OSError("permission denied")),
+            patch("subprocess.run", side_effect=Exception("skip ffprobe")),
         ):
-            with patch("subprocess.run", side_effect=Exception("skip ffprobe")):
-                info = get_media_info("/fake/file.mp4")
-                assert info["size"] == 0
+            info = get_media_info("/fake/file.mp4")
+            assert info["size"] == 0
 
     def test_zero_division_in_framerate_handled(self, temp_dir):
         test_file = os.path.join(temp_dir, "test.mp4")

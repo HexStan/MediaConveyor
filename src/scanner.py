@@ -57,9 +57,12 @@ class Scanner:
 
                 success_time = db_manager.get_success_time(filepath)
                 if success_time is not None:
-                    if remove_source and source_expired_minutes > 0:
-                        if current_time - success_time >= source_expired_minutes * 60:
-                            report.expired_files.append(filepath)
+                    if (
+                        remove_source
+                        and source_expired_minutes > 0
+                        and current_time - success_time >= source_expired_minutes * 60
+                    ):
+                        report.expired_files.append(filepath)
                     logger.debug(
                         f"【{task_name}】跳过 {rel_path}，原因: 文件已成功处理过"
                     )

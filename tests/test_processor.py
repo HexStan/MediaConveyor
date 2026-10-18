@@ -306,7 +306,7 @@ class TestProcessFileFfmpegProcessing:
         with patch("subprocess.Popen") as mock_popen:
             mock_popen.return_value = mock_process
             process_file(entry, tc, sm, mock_logger)
-            args, kwargs = mock_popen.call_args
+            args, _kwargs = mock_popen.call_args
             assert "fallback_cmd" in args[0]
 
     def test_ffmpeg_exception_increments_failure(self, temp_dir, mock_logger):

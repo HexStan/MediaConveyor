@@ -6,7 +6,7 @@ import time
 
 import humanfriendly
 
-from src.utils import get_media_duration, clean_empty_dirs
+from src.utils import clean_empty_dirs, get_media_duration
 
 
 def cleanup_expired_files(expired_files, db_manager, logger):
@@ -71,7 +71,7 @@ def process_file(entry, task_config, db_manager, logger):
     rel_dir = os.path.dirname(rel_path)
     final_dest_dir = os.path.join(dest_dir, rel_dir)
     filename = os.path.basename(filepath)
-    name, ext = os.path.splitext(filename)
+    name, _ext = os.path.splitext(filename)
 
     if entry.action == "passthrough":
         dst_filepath = os.path.join(final_dest_dir, filename)
@@ -82,7 +82,8 @@ def process_file(entry, task_config, db_manager, logger):
             shutil.move(filepath, dst_filepath)
             db_manager.mark_success(filepath, time.time())
             clean_empty_dirs(source_dir)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
+            # 兜底捕获：单个文件的失败不允许中断监听循环，统一记入失败计数
             logger.error(f"【{task_name}】直接移动文件失败: {rel_path}\n{e}")
             db_manager.increment_failure(filepath)
         return
@@ -106,9 +107,12 @@ def process_file(entry, task_config, db_manager, logger):
     ffmpeg_cmd_fallback = task_config.ffmpeg_cmd_fallback
 
     use_fallback = False
-    if fallback_count > 0 and ffmpeg_cmd_fallback:
-        if db_manager.get_ffmpeg_failure_count(filepath) >= fallback_count:
-            use_fallback = True
+    if (
+        fallback_count > 0
+        and ffmpeg_cmd_fallback
+        and db_manager.get_ffmpeg_failure_count(filepath) >= fallback_count
+    ):
+        use_fallback = True
 
     if use_fallback:
         raw_cmd = ffmpeg_cmd_fallback.format(input=filepath, output=dst_basepath)
@@ -144,10 +148,8 @@ def process_file(entry, task_config, db_manager, logger):
                 break
 
             if char:
-                try:
-                    c = char.decode("utf-8", errors="ignore")
-                except:
-                    continue
+                # errors="ignore" 保证解码永远不会抛出异常
+                c = char.decode("utf-8", errors="ignore")
 
                 if c == "\r" or c == "\n":
                     line = last_status_line.strip()
@@ -249,6 +251,7 @@ def process_file(entry, task_config, db_manager, logger):
                             except OSError:
                                 pass
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
+        # 兜底捕获：单个文件的失败不允许中断监听循环，统一记入失败计数
         logger.error(f"【{task_name}】其他失败，原因:\n{e}")
         db_manager.increment_failure(filepath)

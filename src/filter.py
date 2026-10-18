@@ -18,7 +18,7 @@ def parse_timespan(val):
         return float(val)
     try:
         return humanfriendly.parse_timespan(str(val))
-    except Exception:
+    except humanfriendly.InvalidTimespan:
         return float(val)
 
 
@@ -29,9 +29,9 @@ def parse_bitrate(val):
         return float(val)
     val_str = str(val).strip().upper()
     try:
-        if val_str.endswith("KBPS") or val_str.endswith("K"):
+        if val_str.endswith(("KBPS", "K")):
             return float(val_str.replace("KBPS", "").replace("K", "").strip()) * 1024
-        elif val_str.endswith("MBPS") or val_str.endswith("M"):
+        elif val_str.endswith(("MBPS", "M")):
             return (
                 float(val_str.replace("MBPS", "").replace("M", "").strip())
                 * 1024
@@ -45,7 +45,7 @@ def parse_bitrate(val):
     # fallback like size
     try:
         return humanfriendly.parse_size(val_str)
-    except Exception:
+    except humanfriendly.InvalidSize:
         return float(val)
 
 
