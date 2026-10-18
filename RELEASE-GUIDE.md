@@ -75,7 +75,7 @@
 
 ### 第 5 步（仅正式版）：创建 Release
 
-标题为 `vX.Y.Z`，注记为 CHANGELOG 对应小节去掉 `## [x.y.z] - 日期` 标题行后的正文（含迁移指南小节）。
+标题为 `vX.Y.Z`，注记为 CHANGELOG 对应小节去掉 `## [x.y.z] - 日期` 标题行后的正文。
 
 ```bash
 gh release create vX.Y.Z --title "vX.Y.Z" --notes-file release_notes.md
