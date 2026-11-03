@@ -20,7 +20,7 @@
 
 ## 🛠️ 依赖要求
 
-- **Python 3.14+**
+- **[uv](https://docs.astral.sh/uv/)**：用于按锁文件安装依赖并运行程序（Python 由 uv 托管，无需单独安装）。
 - **FFmpeg**：必须安装并配置在系统的环境变量（PATH）中。
 
 ## 🚀 安装与运行
@@ -32,9 +32,9 @@
    git clone https://github.com/HexStan/MediaConveyor.git
    cd MediaConveyor
    ```
-2. **安装 Python 依赖**
+2. **安装依赖**
    ```bash
-   pip install -r requirements.txt
+   uv sync --group dev
    ```
 3. **准备配置文件**
    将示例配置文件复制为正式配置文件，并根据需要进行修改：
@@ -43,7 +43,7 @@
    ```
 4. **运行程序**
    ```bash
-   python main.py
+   uv run python main.py
    ```
 
 ### 方式二：使用 Docker

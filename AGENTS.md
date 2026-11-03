@@ -26,15 +26,14 @@ MediaConveyor：一个监听目录并调用 FFmpeg 处理音视频文件的 Pyth
 ## 常用命令
 
 ```bash
-pip install -r requirements.txt   # 只有 toml + humanfriendly；pytest 不在其中
-pip install pytest                # CI 是单独安装 pytest 的
-python -m pytest                  # 全部测试（pytest.ini 已设 pythonpath=. 和 testpaths=tests）
-python -m pytest tests/test_filter.py -v   # 单个测试文件
-python main.py                    # 必须在仓库根目录运行
+uv sync --group dev               # 安装依赖到 .venv（严格按 uv.lock 锁定；dev 组 = 运行依赖 + pytest）
+uv run python -m pytest           # 全部测试（pyproject.toml 已设 pythonpath=. 和 testpaths=tests）
+uv run python -m pytest tests/test_filter.py -v   # 单个测试文件
+uv run python main.py             # 必须在仓库根目录运行
 ```
 
 - 测试完全离线运行（约 2 秒）：ffmpeg/ffprobe、`subprocess`、文件移动均被 mock。只有真正运行程序才需要安装 FFmpeg。
-- `python main.py` 需要 `config/config.toml`（从 `config/config.example.toml` 复制）以及 PATH 中的 `ffmpeg`。
+- `uv run python main.py` 需要 `config/config.toml`（从 `config/config.example.toml` 复制）以及 PATH 中的 `ffmpeg`。
 
 ## 路径基于当前工作目录，而非仓库根目录
 
@@ -60,7 +59,7 @@ python main.py                    # 必须在仓库根目录运行
 
 - 仅当维护者主动要求时执行对应流程，不得自行提交、推送或发布：
   - 要求提交变更 → 执行 RELEASE-GUIDE.md 的提交流程（前置：仓库存在未提交的变更）。
-  - 要求发布版本 → 执行 RELEASE-GUIDE.md 的发布流程（前置：`VERSION` 文件存在未提交的变更）。
+  - 要求发布版本 → 执行 RELEASE-GUIDE.md 的发布流程（前置：`pyproject.toml` 的 version 字段存在未提交的变更）。
 
 ## 约定
 
