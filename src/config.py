@@ -1,6 +1,5 @@
 import os
-
-import toml
+import tomllib
 
 from src.task_config import TaskConfig
 
@@ -15,8 +14,8 @@ class Config:
         if not os.path.exists(self.config_path):
             raise FileNotFoundError(f"在 {self.config_path} 中找不到配置文件。")
 
-        with open(self.config_path, "r", encoding="utf-8") as f:
-            return toml.load(f)
+        with open(self.config_path, "rb") as f:
+            return tomllib.load(f)
 
     @property
     def global_config(self):
