@@ -1,0 +1,32 @@
+version: 2
+
+updates:
+  # GitHub Actions（.github/workflows/*.yml）
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+
+  # Python 依赖（pyproject.toml 的 PEP 735 依赖组 runtime / dev + 锁文件 uv.lock）
+  - package-ecosystem: uv
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: build
+
+  # 应用镜像（根目录 Dockerfile）
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: build
+    # python 基础镜像停留在 3.14（对齐项目 3.14+ 约定与 Dockerfile 注释），仅跟随补丁更新
+    ignore:
+      - dependency-name: python
+        update-types:
+          - version-update:semver-major
+          - version-update:semver-minor

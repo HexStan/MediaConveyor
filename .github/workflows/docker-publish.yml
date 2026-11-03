@@ -3,11 +3,31 @@ name: Docker Image Publish
 on:
   push:
     paths:
-      - 'VERSION'
+      - 'pyproject.toml'
   workflow_dispatch:
 
 jobs:
+  # pyproject.toml 同时承载依赖与工具配置（Dependabot 每周更新），
+  # 仅当 version 字段相对上次推送实际变化时才构建镜像
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      changed: ${{ steps.version.outputs.changed }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          # version 比较需读取 before 提交的文件内容，fetch-depth: 0 见复合 action 说明
+          fetch-depth: 0
+
+      - name: Detect version change
+        id: version
+        uses: ./.github/actions/version-changed
+
   docker:
+    needs: check
+    if: needs.check.outputs.changed == 'true'
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -31,8 +51,9 @@ jobs:
 
       - name: Generate Docker tags
         id: meta
+        env:
+          VERSION: ${{ needs.check.outputs.version }}
         run: |
-          VERSION=$(head -1 VERSION | tr -d '[:space:]')
           REPO="ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')"
 
           if echo "$VERSION" | grep -qE '\-dev'; then
