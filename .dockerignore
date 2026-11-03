@@ -1,7 +1,18 @@
 .git
 .github
+.idea
+.venv
 __pycache__
+.pytest_cache
 
+# 仓库文档（保留 LICENSE 以符合许可证要求）
+README.md
+AGENTS.md
+ROADMAP.md
+RELEASE-GUIDE.md
+CHANGELOG.md
+
+# 运行时生成的文件 / 本地配置（运行时通过挂载提供，勿打入镜像）
 logs/
 data/
 config.toml
