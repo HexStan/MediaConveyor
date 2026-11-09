@@ -27,7 +27,7 @@
 - Docker 用户需在 `docker-compose.yml` 中新增 `./data:/app/data` 卷挂载，以确保数据库文件持久化。
 - 文件过滤配置从扩展名列表（`input_formats`/`direct_move_formats`）改为 fnmatch 模式列表（`include_patterns`/`exclude_patterns`/`passthrough_patterns`）。旧配置项不会自动迁移，需手动转换（见迁移指南）。
 
-### 迁移指南（v4.x -> 未发布）
+### 迁移指南
 
 #### 1. 状态存储迁移
 
@@ -67,12 +67,6 @@ volumes:
   - ./data:/app/data      # 新增此行
   - ./logs:/app/logs
 ```
-
----
-
-## 旧版本号体系（v1.0.0 – v4.0.0）
-
-> **注**：项目版本号已于 2026-10 重置，自 `0.7.0-dev` 起采用新的版本号体系重新开始迭代。以下 v1.0.0 至 v4.0.0 为旧版本号体系下的历史记录，与当前版本体系不连续；对应的 Tag 与 GitHub Release 已一并清理归档。
 
 ---
 
@@ -289,11 +283,3 @@ source_dir = "/custom/source"
 ## [1.0.0] - 2026-03-17
 
 - 首次发布 Realease。
-
-[4.0.0]: https://github.com/HexStan/MediaConveyor/releases/tag/v4.0.0
-[3.0.0]: https://github.com/HexStan/MediaConveyor/releases/tag/v3.0.0
-[2.0.2]: https://github.com/HexStan/MediaConveyor/releases/tag/v2.0.2
-[2.0.1]: https://github.com/HexStan/MediaConveyor/releases/tag/v2.0.1
-[2.0.0]: https://github.com/HexStan/MediaConveyor/releases/tag/v2.0.0
-[1.0.1]: https://github.com/HexStan/MediaConveyor/releases/tag/v1.0.1
-[1.0.0]: https://github.com/HexStan/MediaConveyor/releases/tag/v1.0.0
