@@ -5,7 +5,7 @@
 ## 通用约定
 
 - 提交信息遵循 Conventional Commits + 中文描述，可带 scope，如 `fix(filter): 修复过滤流水线对目录的匹配缺陷`、`feat(tasks): 引入基于 fnmatch 的文件过滤流水线`。常用类型：`feat` / `fix` / `docs` / `refactor` / `test` / `chore` / `ci`；拿不准时参考 `git log` 近期风格。
-- 版本号唯一出处为 `pyproject.toml` 的 `[project].version` 字段：`[x].[y].[z]` 为正式版，带 `-dev` 后缀为开发版。
+- 版本号只写在根目录 `pyproject.toml` 的 `[project].version` 字段（单值）：`[x].[y].[z]` 为正式版，带 `-dev` 后缀为开发版。
 - `gh` CLI 已认证（HexStan），创建 Release 与触发工作流均通过 `gh` 完成。
 - 流程开始前先同步与验证：
 
@@ -29,12 +29,12 @@
 
 ## 发布流程
 
-前置条件：`pyproject.toml` 的 version 字段存在未提交的变更。若无，先与维护者确认目标版本号（例如将当前开发版号去掉 `-dev` 后缀），修改 `pyproject.toml` 的 version 字段后继续（该修改即成为未提交变更）。
+前置条件：`pyproject.toml` 的 version 字段存在未提交的变更。若无，先与维护者确认目标版本号（例如将当前开发版号去掉 `-dev` 后缀），修改 `pyproject.toml` 后继续（该修改即成为未提交变更）。
 
-发布路径由 version 字段是否带 `-dev` 后缀决定：
+发布路径由版本号是否带 `-dev` 后缀决定：
 
-- version 字段带 `-dev` 后缀 → 开发版路径：第 1–4、6 步。
-- version 字段不带 `-dev` 后缀 → 正式版路径：第 1–6 步。
+- 版本号带 `-dev` 后缀 → 开发版路径：第 1–4、6 步。
+- 版本号不带 `-dev` 后缀 → 正式版路径：第 1–6 步。
 
 ### 第 1 步：提交变更
 
@@ -44,16 +44,14 @@
 
 只收录**用户可感知的变更**（影响行为、配置、日志输出、使用方式等）；纯重构、测试调整、CI 改动等不改变程序行为的变更不写入。分类子标题顺序固定：`### 破坏性变更` → `### 新增` → `### 修复` → `### 变更`，仅保留有内容的分类。存在破坏性变更时，可在该版本段落末尾追加 `### 迁移指南` 小节，给出旧配置对照、迁移步骤等用户需要的操作说明。
 
-#### 开发版（version 字段带 `-dev` 后缀）
+本步编写完成后停下，提示维护者查看编写完成的 `CHANGELOG.md`，**得到许可后**方可进入第 3 步提交。维护者要求调整时，修改后再次请其确认。
 
-1. 界定增量范围：
-   - 用 `git log -p -- pyproject.toml` 找到当前**已提交**的 `-dev` 版本号（即上个 DEV 版；工作区未提交的新值不算），以及将其写入 version 字段的提交（diff 中出现 `+version = "<上个DEV版>"` 的提交；Dependabot 的依赖升级提交也会改到该文件，以版本号实际变更为准），记为分界提交。
-   - 分析范围 = `分界提交^..HEAD`（含分界提交自身——本仓库版本号递增常与功能变更在同一提交）。
-   - 不存在更早的 `-dev` 版本时，以上个正式版 tag 为分界（`git describe --abbrev=0 --match='v*' --exclude='*-dev'`），范围 = `<tag>..HEAD`。
-   - 既无更早的 `-dev` 版本、也无 `v*` tag 时（版本号体系重置后的首次发布即属此类），与维护者确认分析范围。
-2. 分析 `git log --oneline <范围>` 及相关提交内容，将结果**合并**进 `## 未发布` 段落：与现有条目去重；发现此前遗漏的用户可感知变更一并补充。最终以「`未发布` 段落完整覆盖自上个正式版以来的全部用户可感知变更、且无重复条目」为准。
+#### 开发版（版本号带 `-dev` 后缀）
 
-#### 正式版（version 字段不带 `-dev` 后缀）
+1. 确定上个 tag（`git describe --abbrev=0 --match='v*'`，不排除 `-dev` tag——上个 tag 是开发版或正式版均可作为分界），分析 `git log --oneline <tag>..HEAD` 及相关提交内容。
+2. 将结果**合并**进 `## 未发布` 段落：与现有条目去重；发现此前遗漏的用户可感知变更一并补充。最终以「`未发布` 段落完整覆盖自上个正式版以来的全部用户可感知变更、且无重复条目」为准。
+
+#### 正式版（版本号不带 `-dev` 后缀）
 
 1. 确定上个正式版 tag（`git describe --abbrev=0 --match='v*' --exclude='*-dev'`；不存在任何正式版 tag 时，与维护者确认分析范围），分析 `git log --oneline <tag>..HEAD`，以 `## 未发布` 段落为底稿核对、补全。
 2. 将发布内容写入新段落 `## [x.y.z] - YYYY-MM-DD`（日期为发布当日），置于 `## 未发布` 之后、上一个正式版段落之前；仅包含用户可感知的变更。
@@ -69,10 +67,10 @@
 
 ### 第 4 步：打 tag 并推送
 
-1. 打附注 tag，指向第 3 步的提交；tag 名为 `v` + version 字段值。tag 已存在时停止并报告维护者：
+1. 打附注 tag，指向第 3 步的提交；tag 名为 `v` + 版本号（`pyproject.toml` 的 version 字段）。tag 已存在时停止并报告维护者：
 
-   - 开发版（version 字段为 `x.y.z-dev`）：`git tag -a vX.Y.Z-dev -m "Release vX.Y.Z-dev"`。
-   - 正式版（version 字段为 `x.y.z`）：`git tag -a vX.Y.Z -m "Release vX.Y.Z"`。
+   - 开发版（版本号为 `x.y.z-dev`）：`git tag -a vX.Y.Z-dev -m "Release vX.Y.Z-dev"`。
+   - 正式版（版本号为 `x.y.z`）：`git tag -a vX.Y.Z -m "Release vX.Y.Z"`。
 
 2. `git push origin <分支名> <tag>`（分支与 tag 一起推送）。
 
@@ -92,12 +90,12 @@ gh release create vX.Y.Z --title "vX.Y.Z" --notes-file release_notes.md
 Docker 镜像的构建与推送由 CI（`.github/workflows/docker-publish.yml`）完成，Agent 只需保证提交已推送：
 
 - 分支与版本 tag 均已在第 4 步一并推送，本步无需再推送。
-- CI 触发条件：推送且 `pyproject.toml` 有变更（任意分支均触发），工作流先经复合 action 比较 version 字段相对上次推送是否实际变化——仅依赖升级（Dependabot）不改版本号时不会构建镜像。若本次推送未变更 version 字段（补发场景），手动触发：`gh workflow run docker-publish.yml --ref <分支名>`。
+- CI 触发条件：推送且 `pyproject.toml` 的 version 字段相对上次推送有变更（任意分支均触发；`pyproject.toml` 的其他变更——如依赖版本升级——不会触发）。若本次推送未变更 version（补发场景），手动触发：`gh workflow run docker-publish.yml --ref <分支名>`。
 - 确认构建成功：`gh run list --workflow=docker-publish.yml --limit 1`（或 `gh run watch`）；失败时报告维护者。
 
 构建以仓库根为 context（`Dockerfile` 位于仓库根目录），产物推送至 GHCR（镜像名 = 仓库名全小写）：
 
-| version 字段 | 镜像标签 |
+| 版本号 | 镜像标签 |
 | --- | --- |
 | `x.y.z-dev` | `x.y.z-dev`、`dev` |
 | `x.y.z`（正式版） | `x.y.z`、`latest` |
@@ -147,13 +145,13 @@ Docker 镜像的构建与推送由 CI（`.github/workflows/docker-publish.yml`�
 
 ```bash
 VERSION=x.y.z
-python - "$VERSION" <<'PY' > release_notes.md
+python - "$VERSION" <<'PY'
 import re, sys
 version = sys.argv[1]
 content = open('CHANGELOG.md', encoding='utf-8').read()
 m = re.search(rf'## \[{re.escape(version)}\].*?(?=\n---|\n## \[|\n\[\d|\Z)', content, re.DOTALL)
 notes = m.group(0).strip().split('\n', 1)[1] if m and '\n' in m.group(0) else ''
-print(notes.strip())
+open('release_notes.md', 'w', encoding='utf-8').write(notes.strip())
 PY
 ```
 
