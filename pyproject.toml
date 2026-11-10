@@ -54,6 +54,13 @@ dev = [
     "pytest==9.1.1",
 ]
 
+[tool.mediaconveyor]
+# 内置 FFmpeg 的版本（唯一出处），语义为 FFmpeg 发布分支（major.minor）：
+# Docker 镜像（根目录 Dockerfile）取 BtbN/FFmpeg-Builds 的同名分支构建
+# （ffmpeg-n{版本}-latest-linux{64|arm64}-gpl-{版本}）。
+# 升级时仅需修改本值并重新构建镜像。
+ffmpeg_version = "8.1"
+
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
