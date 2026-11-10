@@ -1,8 +1,28 @@
+# IDE / 编辑器
 .idea/
+.vscode/
+
+# Python 虚拟环境与字节码
 .venv/
 __pycache__/
-.pytest_cache/
+*.py[cod]
 
+# 测试与工具缓存
+.pytest_cache/
+.ruff_cache/
+
+# 运行时生成的文件
 logs/
 data/
+
+# 本地运行目录（默认配置的 source/ dest/ backup/）
+source/
+dest/
+backup/
+
+# 本地配置（仓库只提交 config/config.example.toml）
 config.toml
+config.backup.toml
+
+# 发布流程生成的文件
+release_notes.md
