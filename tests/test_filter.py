@@ -375,10 +375,7 @@ class TestFileFilterMatch:
             {"debug": lambda self, msg: setattr(self, "last_msg", msg)},
         )()
         info = {"size": 100}
-        assert (
-            ff.match(info, logger=mock_logger, rel_path="test.mp4", task_name="T1")
-            is False
-        )
+        assert ff.match(info, logger=mock_logger, rel_path="test.mp4", task_name="T1") is False
         assert "T1" in mock_logger.last_msg
         assert "test.mp4" in mock_logger.last_msg
 
@@ -459,9 +456,7 @@ class TestFileFilterClassify:
         assert ff.classify("charlie.mkv") == "skip"
 
     def test_exclude_overrides_include(self):
-        ff = FileFilter(
-            {"include_patterns": ["*.mp4"], "exclude_patterns": ["*sample*"]}
-        )
+        ff = FileFilter({"include_patterns": ["*.mp4"], "exclude_patterns": ["*sample*"]})
         assert ff.classify("video.mp4") == "process"
         assert ff.classify("video-sample.mp4") == "skip"
 
@@ -490,9 +485,7 @@ class TestFileFilterClassify:
         assert ff.classify("beta/notes.txt") == "skip"
 
     def test_exclude_takes_priority_over_passthrough(self):
-        ff = FileFilter(
-            {"exclude_patterns": ["*.txt"], "passthrough_patterns": ["*.txt"]}
-        )
+        ff = FileFilter({"exclude_patterns": ["*.txt"], "passthrough_patterns": ["*.txt"]})
         assert ff.classify("notes.txt") == "skip"
 
     def test_case_insensitive(self):

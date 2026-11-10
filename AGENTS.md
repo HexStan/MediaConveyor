@@ -26,9 +26,11 @@ MediaConveyor：一个监听目录并调用 FFmpeg 处理音视频文件的 Pyth
 ## 常用命令
 
 ```bash
-uv sync --group dev               # 安装依赖到 .venv（严格按 uv.lock 锁定；dev 组 = 运行依赖 + pytest）
+uv sync --group dev               # 安装依赖到 .venv（严格按 uv.lock 锁定；dev 组 = 运行依赖 + pytest / ruff）
 uv run python -m pytest           # 全部测试（pyproject.toml 已设 pythonpath=. 和 testpaths=tests）
 uv run python -m pytest tests/test_filter.py -v   # 单个测试文件
+uv run ruff check .               # Ruff 静态检查
+uv run ruff format .              # Ruff 格式化
 uv run python main.py             # 必须在仓库根目录运行
 ```
 
@@ -50,10 +52,10 @@ uv run python main.py             # 必须在仓库根目录运行
 ## 平台与 CI
 
 - CI 有两个工作流：
-  - `.github/workflows/tests.yml`：在 ubuntu + windows、Python 3.14–3.15 上运行 `pytest`。
+  - `.github/workflows/tests.yml`：ubuntu 上运行 Ruff 静态检查（lint job）；ubuntu + windows、Python 3.14–3.15 上运行 `pytest`（test job）。
   - `.github/workflows/docker-publish.yml`：发布时构建并推送 Docker 镜像（详见 RELEASE-GUIDE.md）。
-- 没有配置任何 linter、formatter 或 typechecker —— `pytest` 是唯一的自动化检查。
-- 代码必须保持跨平台；Docker 运行环境是基于 Debian 的，带 GPU/VAAPI 驱动。
+- 静态检查与格式化使用 Ruff（权威配置：pyproject.toml 的 `[tool.ruff]`）；未配置 typechecker —— `pytest` 是唯一的测试自动化检查。
+- 代码必须保持跨平台；Docker 运行环境是基于 Debian 的，带 GPU/VAAPI 驱动，内置 FFmpeg 版本声明在 pyproject.toml 的 `[tool.mediaconveyor]`。
 
 ## 提交与发布（权威文档：RELEASE-GUIDE.md）
 

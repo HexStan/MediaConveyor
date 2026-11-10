@@ -19,9 +19,7 @@ LOCK_FILE = "/tmp/media_conveyor.lock"
 
 def acquire_lock():
     if not HAS_FCNTL:
-        print(
-            "Warning: fcntl module not found. File locking is only supported on Linux/Unix."
-        )
+        print("Warning: fcntl module not found. File locking is only supported on Linux/Unix.")
         return None
 
     try:
@@ -34,9 +32,7 @@ def acquire_lock():
         sys.exit(1)
 
 
-def run_task(
-    task_config, scanner, db_manager, logger, scan_interval, monitoring_logged
-):
+def run_task(task_config, scanner, db_manager, logger, scan_interval, monitoring_logged):
     report = scanner.scan(task_config, db_manager, logger)
 
     if report.expired_files:
@@ -47,9 +43,7 @@ def run_task(
 
     if not report.entries:
         if task_name not in monitoring_logged:
-            logger.info(
-                f"【{task_name}】正在以 {scan_interval} 秒的间隔持续监听 {source_dir}"
-            )
+            logger.info(f"【{task_name}】正在以 {scan_interval} 秒的间隔持续监听 {source_dir}")
             monitoring_logged.add(task_name)
         return False
 

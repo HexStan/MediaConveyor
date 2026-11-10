@@ -32,11 +32,7 @@ def parse_bitrate(val):
         if val_str.endswith(("KBPS", "K")):
             return float(val_str.replace("KBPS", "").replace("K", "").strip()) * 1024
         elif val_str.endswith(("MBPS", "M")):
-            return (
-                float(val_str.replace("MBPS", "").replace("M", "").strip())
-                * 1024
-                * 1024
-            )
+            return float(val_str.replace("MBPS", "").replace("M", "").strip()) * 1024 * 1024
         elif val_str.endswith("BPS"):
             return float(val_str.replace("BPS", "").strip())
     except ValueError:
@@ -53,15 +49,9 @@ class FileFilter:
     def __init__(self, filter_config):
         self.config = filter_config
 
-        self.include_patterns = [
-            p.lower() for p in self.config.get("include_patterns", [])
-        ]
-        self.exclude_patterns = [
-            p.lower() for p in self.config.get("exclude_patterns", [])
-        ]
-        self.passthrough_patterns = [
-            p.lower() for p in self.config.get("passthrough_patterns", [])
-        ]
+        self.include_patterns = [p.lower() for p in self.config.get("include_patterns", [])]
+        self.exclude_patterns = [p.lower() for p in self.config.get("exclude_patterns", [])]
+        self.passthrough_patterns = [p.lower() for p in self.config.get("passthrough_patterns", [])]
         self.file_mtime = int(self.config.get("file_mtime", 0))
 
         self.size_min = parse_size(self._get_range("size", "min"))
@@ -85,12 +75,8 @@ class FileFilter:
         self.short_side_min = int(self._get_range("short_side", "min") or 0)
         self.short_side_max = int(self._get_range("short_side", "max") or 0)
 
-        self.exclude_vcodecs = [
-            c.lower() for c in self.config.get("exclude_video_codecs", [])
-        ]
-        self.exclude_acodecs = [
-            c.lower() for c in self.config.get("exclude_audio_codecs", [])
-        ]
+        self.exclude_vcodecs = [c.lower() for c in self.config.get("exclude_video_codecs", [])]
+        self.exclude_acodecs = [c.lower() for c in self.config.get("exclude_audio_codecs", [])]
 
     def _get_range(self, key, boundary):
         val = self.config.get(key, {})
@@ -110,9 +96,7 @@ class FileFilter:
         """
         rel_path = rel_path.replace("\\", "/").lower()
 
-        if self.include_patterns and not self._match_patterns(
-            rel_path, self.include_patterns
-        ):
+        if self.include_patterns and not self._match_patterns(rel_path, self.include_patterns):
             return "skip"
         if self._match_patterns(rel_path, self.exclude_patterns):
             return "skip"
@@ -130,7 +114,7 @@ class FileFilter:
         if self.file_mtime <= 0:
             return True
         return (current_time - mtime) >= self.file_mtime
-    
+
     def requires_media_info(self):
         """
         判断是否配置了需要 ffprobe 才能获取到的条件（即 size 和 mtime 以外的条件）
@@ -154,7 +138,7 @@ class FileFilter:
                 self.exclude_acodecs,
             ]
         )
-    
+
     def match(self, media_info, logger=None, rel_path="", task_name=""):
         if self.size_min > 0 and media_info["size"] < self.size_min:
             if logger:
@@ -162,7 +146,7 @@ class FileFilter:
                     f"【{task_name}】跳过 {rel_path}，原因: 文件大小 ({media_info['size']}) 小于最小值 ({self.size_min})"
                 )
             return False
-        if self.size_max > 0 and media_info["size"] > self.size_max:
+        if 0 < self.size_max < media_info["size"]:
             if logger:
                 logger.debug(
                     f"【{task_name}】跳过 {rel_path}，原因: 文件大小 ({media_info['size']}) 大于最大值 ({self.size_max})"
@@ -175,7 +159,7 @@ class FileFilter:
                     f"【{task_name}】跳过 {rel_path}，原因: 时长 ({media_info['duration']}s) 小于最小值 ({self.duration_min}s)"
                 )
             return False
-        if self.duration_max > 0 and media_info["duration"] > self.duration_max:
+        if 0 < self.duration_max < media_info["duration"]:
             if logger:
                 logger.debug(
                     f"【{task_name}】跳过 {rel_path}，原因: 时长 ({media_info['duration']}s) 大于最大值 ({self.duration_max}s)"
@@ -188,7 +172,7 @@ class FileFilter:
                     f"【{task_name}】跳过 {rel_path}，原因: 总码率 ({media_info['total_bitrate']}) 小于最小值 ({self.t_bitrate_min})"
                 )
             return False
-        if self.t_bitrate_max > 0 and media_info["total_bitrate"] > self.t_bitrate_max:
+        if 0 < self.t_bitrate_max < media_info["total_bitrate"]:
             if logger:
                 logger.debug(
                     f"【{task_name}】跳过 {rel_path}，原因: 总码率 ({media_info['total_bitrate']}) 大于最大值 ({self.t_bitrate_max})"
@@ -201,7 +185,7 @@ class FileFilter:
                     f"【{task_name}】跳过 {rel_path}，原因: 视频码率 ({media_info['video_bitrate']}) 小于最小值 ({self.v_bitrate_min})"
                 )
             return False
-        if self.v_bitrate_max > 0 and media_info["video_bitrate"] > self.v_bitrate_max:
+        if 0 < self.v_bitrate_max < media_info["video_bitrate"]:
             if logger:
                 logger.debug(
                     f"【{task_name}】跳过 {rel_path}，原因: 视频码率 ({media_info['video_bitrate']}) 大于最大值 ({self.v_bitrate_max})"
@@ -214,7 +198,7 @@ class FileFilter:
                     f"【{task_name}】跳过 {rel_path}，原因: 音频码率 ({media_info['audio_bitrate']}) 小于最小值 ({self.a_bitrate_min})"
                 )
             return False
-        if self.a_bitrate_max > 0 and media_info["audio_bitrate"] > self.a_bitrate_max:
+        if 0 < self.a_bitrate_max < media_info["audio_bitrate"]:
             if logger:
                 logger.debug(
                     f"【{task_name}】跳过 {rel_path}，原因: 音频码率 ({media_info['audio_bitrate']}) 大于最大值 ({self.a_bitrate_max})"
@@ -227,7 +211,7 @@ class FileFilter:
                     f"【{task_name}】跳过 {rel_path}，原因: 帧率 ({media_info['framerate']}) 小于最小值 ({self.framerate_min})"
                 )
             return False
-        if self.framerate_max > 0 and media_info["framerate"] > self.framerate_max:
+        if 0 < self.framerate_max < media_info["framerate"]:
             if logger:
                 logger.debug(
                     f"【{task_name}】跳过 {rel_path}，原因: 帧率 ({media_info['framerate']}) 大于最大值 ({self.framerate_max})"
@@ -240,27 +224,21 @@ class FileFilter:
                     f"【{task_name}】跳过 {rel_path}，原因: 短边分辨率 ({media_info['short_side']}) 小于最小值 ({self.short_side_min})"
                 )
             return False
-        if self.short_side_max > 0 and media_info["short_side"] > self.short_side_max:
+        if 0 < self.short_side_max < media_info["short_side"]:
             if logger:
                 logger.debug(
                     f"【{task_name}】跳过 {rel_path}，原因: 短边分辨率 ({media_info['short_side']}) 大于最大值 ({self.short_side_max})"
                 )
             return False
 
-        if (
-            self.exclude_vcodecs
-            and media_info["video_codec"].lower() in self.exclude_vcodecs
-        ):
+        if self.exclude_vcodecs and media_info["video_codec"].lower() in self.exclude_vcodecs:
             if logger:
                 logger.debug(
                     f"【{task_name}】跳过 {rel_path}，原因: 视频编码 ({media_info['video_codec']}) 在排除列表中 ({self.exclude_vcodecs})"
                 )
             return False
 
-        if (
-            self.exclude_acodecs
-            and media_info["audio_codec"].lower() in self.exclude_acodecs
-        ):
+        if self.exclude_acodecs and media_info["audio_codec"].lower() in self.exclude_acodecs:
             if logger:
                 logger.debug(
                     f"【{task_name}】跳过 {rel_path}，原因: 音频编码 ({media_info['audio_codec']}) 在排除列表中 ({self.exclude_acodecs})"

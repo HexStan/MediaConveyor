@@ -45,9 +45,7 @@ class TaskConfig:
 
         for key in ("include_patterns", "exclude_patterns", "passthrough_patterns"):
             patterns = f_config[key]
-            if not isinstance(patterns, list) or any(
-                not isinstance(p, str) for p in patterns
-            ):
+            if not isinstance(patterns, list) or any(not isinstance(p, str) for p in patterns):
                 raise ValueError(f"任务 {index} 中 {key} 必须是字符串列表")
 
         return cls(

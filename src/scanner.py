@@ -48,9 +48,7 @@ class Scanner:
 
                 classification = file_filter.classify(rel_path)
                 if classification == "skip":
-                    logger.debug(
-                        f"【{task_name}】跳过 {rel_path}，原因: 文件名不匹配过滤规则"
-                    )
+                    logger.debug(f"【{task_name}】跳过 {rel_path}，原因: 文件名不匹配过滤规则")
                     continue
 
                 logger.debug(f"【{task_name}】扫描到文件: {rel_path}")
@@ -63,9 +61,7 @@ class Scanner:
                         and current_time - success_time >= source_expired_minutes * 60
                     ):
                         report.expired_files.append(filepath)
-                    logger.debug(
-                        f"【{task_name}】跳过 {rel_path}，原因: 文件已成功处理过"
-                    )
+                    logger.debug(f"【{task_name}】跳过 {rel_path}，原因: 文件已成功处理过")
                     continue
 
                 failures = db_manager.get_failure_count(filepath)
@@ -95,9 +91,7 @@ class Scanner:
                         else:
                             media_info = {"size": stat.st_size}
 
-                        if not file_filter.match(
-                            media_info, logger, rel_path, task_name
-                        ):
+                        if not file_filter.match(media_info, logger, rel_path, task_name):
                             continue
 
                     entry = ScanEntry(
@@ -107,12 +101,8 @@ class Scanner:
                         media_info=media_info,
                     )
                     report.entries.append(entry)
-                    logger.info(
-                        f"【{task_name}】在 {source_dir} 中监测到新文件: {rel_path}"
-                    )
-                    logger.debug(
-                        f"【{task_name}】{rel_path} 进入处理队列 (动作: {classification})"
-                    )
+                    logger.info(f"【{task_name}】在 {source_dir} 中监测到新文件: {rel_path}")
+                    logger.debug(f"【{task_name}】{rel_path} 进入处理队列 (动作: {classification})")
                 except OSError as e:
                     logger.error(f"读取文件失败: {filepath}\n{e}")
 

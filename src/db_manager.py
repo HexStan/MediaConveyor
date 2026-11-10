@@ -13,10 +13,7 @@ class DBManager:
 
         self._conn = sqlite3.connect(self.db_path)
         self._conn.execute(
-            "CREATE TABLE IF NOT EXISTS meta ("
-            "    key   TEXT PRIMARY KEY,"
-            "    value TEXT NOT NULL"
-            ")"
+            "CREATE TABLE IF NOT EXISTS meta (    key   TEXT PRIMARY KEY,    value TEXT NOT NULL)"
         )
         self._conn.execute(
             "CREATE TABLE IF NOT EXISTS file_state ("

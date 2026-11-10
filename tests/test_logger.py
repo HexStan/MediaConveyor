@@ -23,9 +23,7 @@ class TestDailyRotatingFileHandler:
     def test_emit_same_day_no_rotation(self, temp_dir):
         handler = DailyRotatingFileHandler(temp_dir, 7)
         original_filename = handler.baseFilename
-        record = logging.LogRecord(
-            "test", logging.INFO, "", 0, "test message", (), None
-        )
+        record = logging.LogRecord("test", logging.INFO, "", 0, "test message", (), None)
         handler.emit(record)
         assert handler.baseFilename == original_filename
         handler.close()
@@ -42,9 +40,7 @@ class TestDailyRotatingFileHandler:
         handler.current_date = yesterday
         handler.baseFilename = yesterday_file
 
-        record = logging.LogRecord(
-            "test", logging.INFO, "", 0, "test message", (), None
-        )
+        record = logging.LogRecord("test", logging.INFO, "", 0, "test message", (), None)
         handler.emit(record)
         assert handler.current_date == today
         handler.close()
@@ -59,9 +55,7 @@ class TestDailyRotatingFileHandler:
         handler.current_date = yesterday
         handler.baseFilename = yesterday_file
 
-        record = logging.LogRecord(
-            "test", logging.INFO, "", 0, "test message", (), None
-        )
+        record = logging.LogRecord("test", logging.INFO, "", 0, "test message", (), None)
         handler.emit(record)
         handler.close()
 
@@ -142,8 +136,7 @@ class TestCleanupOldLogs:
         log_files = glob.glob(os.path.join(temp_dir, "mediaconveyor-*.log"))
         assert len(log_files) == 2
         remaining_dates = [
-            os.path.basename(f).replace("mediaconveyor-", "").replace(".log", "")
-            for f in log_files
+            os.path.basename(f).replace("mediaconveyor-", "").replace(".log", "") for f in log_files
         ]
         assert dates[-1] in remaining_dates
         assert dates[-2] in remaining_dates

@@ -1,4 +1,4 @@
-﻿import os
+import os
 import time
 from unittest.mock import MagicMock, patch
 
@@ -62,9 +62,7 @@ class TestProcessFileStabilityCheck:
 
         return DBManager(os.path.join(temp_dir, "state.json"))
 
-    def test_stability_check_passes_when_size_unchanged(
-        self, temp_dir, mock_logger, mock_state
-    ):
+    def test_stability_check_passes_when_size_unchanged(self, temp_dir, mock_logger, mock_state):
         filepath = os.path.join(temp_dir, "stable.mp4")
         with open(filepath, "w") as f:
             f.write("d" * 1000)
@@ -82,9 +80,7 @@ class TestProcessFileStabilityCheck:
             process_file(entry, tc, mock_state, mock_logger)
             mock_move.assert_called_once()
 
-    def test_stability_check_fails_when_size_changed(
-        self, temp_dir, mock_logger, mock_state
-    ):
+    def test_stability_check_fails_when_size_changed(self, temp_dir, mock_logger, mock_state):
         filepath = os.path.join(temp_dir, "changing.mp4")
         with open(filepath, "w") as f:
             f.write("d" * 1000)
@@ -106,9 +102,7 @@ class TestProcessFileStabilityCheck:
         with patch("os.path.getsize", side_effect=mock_getsize):
             process_file(entry, tc, mock_state, mock_logger)
 
-    def test_stability_check_file_missing_before(
-        self, temp_dir, mock_logger, mock_state
-    ):
+    def test_stability_check_file_missing_before(self, temp_dir, mock_logger, mock_state):
         tc = _make_task_config(
             source_dir=temp_dir,
             dest_dir=os.path.join(temp_dir, "dest"),
@@ -116,14 +110,10 @@ class TestProcessFileStabilityCheck:
             stable_duration=0.01,
         )
 
-        entry = ScanEntry(
-            filepath=os.path.join(temp_dir, "gone.mp4"), action="process", size=1000
-        )
+        entry = ScanEntry(filepath=os.path.join(temp_dir, "gone.mp4"), action="process", size=1000)
         process_file(entry, tc, mock_state, mock_logger)
 
-    def test_stability_check_file_missing_after(
-        self, temp_dir, mock_logger, mock_state
-    ):
+    def test_stability_check_file_missing_after(self, temp_dir, mock_logger, mock_state):
         filepath = os.path.join(temp_dir, "temp.mp4")
         with open(filepath, "w") as f:
             f.write("d" * 1000)
@@ -467,9 +457,7 @@ class TestProcessFileFfmpegProcessing:
         assert os.path.exists(other_file)
         assert sm.get_failure_count(filepath) == 1
 
-    def test_remove_source_false_no_backup_dir_keeps_file_in_place(
-        self, temp_dir, mock_logger
-    ):
+    def test_remove_source_false_no_backup_dir_keeps_file_in_place(self, temp_dir, mock_logger):
         from src.db_manager import DBManager
 
         sm = DBManager(os.path.join(temp_dir, "state.json"))
@@ -508,9 +496,7 @@ class TestProcessFileFfmpegProcessing:
         assert os.path.exists(filepath)
         assert sm.get_success_time(filepath) is not None
 
-    def test_ffmpeg_fallback_failure_increments_normal_failure(
-        self, temp_dir, mock_logger
-    ):
+    def test_ffmpeg_fallback_failure_increments_normal_failure(self, temp_dir, mock_logger):
         from src.db_manager import DBManager
 
         sm = DBManager(os.path.join(temp_dir, "state.json"))

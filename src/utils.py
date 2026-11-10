@@ -50,9 +50,7 @@ def get_media_info(filepath):
         filepath,
     ]
     try:
-        result = subprocess.run(
-            cmd, capture_output=True, text=True, timeout=15, check=False
-        )
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=15, check=False)
         if result.returncode == 0:
             data = json.loads(result.stdout)
 
@@ -84,9 +82,7 @@ def get_media_info(filepath):
                         info["short_side"] = min(width, height)
 
                     # 尝试计算帧率，形如 "24000/1001" 或 "24/1"
-                    fps_str = stream.get("avg_frame_rate") or stream.get(
-                        "r_frame_rate", ""
-                    )
+                    fps_str = stream.get("avg_frame_rate") or stream.get("r_frame_rate", "")
                     if fps_str and "/" in fps_str:
                         num, den = fps_str.split("/")
                         try:

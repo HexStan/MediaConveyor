@@ -32,14 +32,10 @@ def process_file(entry, task_config, db_manager, logger):
             old_size = os.path.getsize(filepath)
         except OSError:
             logger.warning(f"【{task_name}】文件 {rel_path} 已不存在，跳过处理。")
-            logger.debug(
-                f"【{task_name}】跳过 {rel_path}，原因: 执行稳定性检查时文件已不存在"
-            )
+            logger.debug(f"【{task_name}】跳过 {rel_path}，原因: 执行稳定性检查时文件已不存在")
             return
 
-        logger.info(
-            f"【{task_name}】正在检查 {rel_path} 在 {stable_duration} 秒内的一致性……"
-        )
+        logger.info(f"【{task_name}】正在检查 {rel_path} 在 {stable_duration} 秒内的一致性……")
         logger.debug(f"【{task_name}】{rel_path} 稳定性检查前大小: {old_size} 字节")
         time.sleep(stable_duration)
 
@@ -54,9 +50,7 @@ def process_file(entry, task_config, db_manager, logger):
                 return
         except OSError:
             logger.warning(f"【{task_name}】文件 {rel_path} 已不存在，跳过处理。")
-            logger.debug(
-                f"【{task_name}】跳过 {rel_path}，原因: 稳定性检查后文件已不存在"
-            )
+            logger.debug(f"【{task_name}】跳过 {rel_path}，原因: 稳定性检查后文件已不存在")
             return
     else:
         if not os.path.exists(filepath):
@@ -107,18 +101,12 @@ def process_file(entry, task_config, db_manager, logger):
     ffmpeg_cmd_fallback = task_config.ffmpeg_cmd_fallback
 
     use_fallback = False
-    if (
-        fallback_count > 0
-        and ffmpeg_cmd_fallback
-        and db_manager.get_ffmpeg_failure_count(filepath) >= fallback_count
-    ):
+    if 0 < fallback_count <= db_manager.get_ffmpeg_failure_count(filepath) and ffmpeg_cmd_fallback:
         use_fallback = True
 
     if use_fallback:
         raw_cmd = ffmpeg_cmd_fallback.format(input=filepath, output=dst_basepath)
-        logger.info(
-            f"【{task_name}】使用 fallback 命令处理 {rel_path}，媒体时长 {duration}。"
-        )
+        logger.info(f"【{task_name}】使用 fallback 命令处理 {rel_path}，媒体时长 {duration}。")
     else:
         raw_cmd = task_config.ffmpeg_cmd.format(input=filepath, output=dst_basepath)
         logger.info(f"【{task_name}】开始处理 {rel_path}，媒体时长 {duration}。")
@@ -131,9 +119,7 @@ def process_file(entry, task_config, db_manager, logger):
     start_time = time.time()
     try:
         # 执行命令，使用 Popen 实时读取输出
-        process = subprocess.Popen(
-            cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-        )
+        process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         last_status_line = ""
         error_output = []

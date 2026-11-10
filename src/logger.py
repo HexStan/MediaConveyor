@@ -22,9 +22,7 @@ class DailyRotatingFileHandler(logging.FileHandler):
         if new_date != self.current_date:
             self.current_date = new_date
             self.close()
-            filename = os.path.join(
-                self.log_dir, f"mediaconveyor-{self.current_date}.log"
-            )
+            filename = os.path.join(self.log_dir, f"mediaconveyor-{self.current_date}.log")
             self.baseFilename = os.path.abspath(filename)
             self.stream = self._open()
 

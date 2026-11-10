@@ -87,8 +87,7 @@ def sample_db_with_data(temp_dir):
         ")"
     )
     conn.execute(
-        "INSERT INTO file_state (filepath, failure_count, ffmpeg_failure_count)"
-        " VALUES (?, ?, ?)",
+        "INSERT INTO file_state (filepath, failure_count, ffmpeg_failure_count) VALUES (?, ?, ?)",
         ("/test/file1.mp4", 2, 1),
     )
     conn.execute(

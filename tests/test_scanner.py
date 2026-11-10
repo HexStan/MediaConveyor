@@ -1,4 +1,4 @@
-﻿import os
+import os
 import time
 from unittest.mock import MagicMock, patch
 
@@ -35,9 +35,7 @@ class TestScanEntry:
 
     def test_create_scan_entry_with_media_info(self):
         mi = {"duration": 120.0, "size": 1024}
-        entry = ScanEntry(
-            filepath="/test/file.mp4", action="process", size=1024, media_info=mi
-        )
+        entry = ScanEntry(filepath="/test/file.mp4", action="process", size=1024, media_info=mi)
         assert entry.media_info == mi
 
 
@@ -57,9 +55,7 @@ class TestScanner:
         from src.filter import FileFilter
 
         ff = FileFilter({})
-        tc = _make_basic_task_config(
-            os.path.join(temp_dir, "nonexistent"), filter_config=ff
-        )
+        tc = _make_basic_task_config(os.path.join(temp_dir, "nonexistent"), filter_config=ff)
         from src.db_manager import DBManager
 
         sm = DBManager(os.path.join(temp_dir, "state.json"))
