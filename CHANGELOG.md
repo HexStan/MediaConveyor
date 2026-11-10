@@ -289,7 +289,7 @@ source_dir = "/custom/source"
 
 ## [1.0.0] - 2026-03-17
 
-1. 首次发布 Realease。
+1. 首次发布 Release。
 
 ---
 
