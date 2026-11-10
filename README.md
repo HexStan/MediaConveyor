@@ -1,5 +1,8 @@
 # MediaConveyor
 
+> [!WARNING]
+> **本项目已停止功能更新，且不再承诺任何形式的维护，包括安全更新与缺陷修复。** 如需继续使用，强烈建议移步至后继项目 [MediaConveyorV2](https://github.com/HexStan/MediaConveyorV2)。
+
 **MediaConveyor** 是一个基于 Python 的轻量级自动化工具，用于监听指定目录中的音视频文件，并在文件写入完成后自动调用 FFmpeg 进行处理。它非常适合需要自动化音视频转码、压缩或格式转换的场景。
 
 📝 [更新日志](./CHANGELOG.md)
