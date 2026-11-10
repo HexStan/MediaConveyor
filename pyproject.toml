@@ -15,7 +15,7 @@
 name = "mediaconveyor"
 # 版本号唯一出处（发布流程使用，见 RELEASE-GUIDE.md）：
 # [x].[y].[z] 为正式版，带 -dev 后缀为开发版。
-version = "0.7.0-dev"
+version = "8.0.0"
 description = "监听指定目录并自动调用 FFmpeg 处理音视频文件的轻量级自动化工具"
 readme = "README.md"
 license = "MIT"

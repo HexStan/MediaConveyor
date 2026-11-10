@@ -4,6 +4,18 @@
 
 ## 未发布
 
+---
+
+## [8.0.0] - 2026-11-10
+
+> 该版本可能是 MediaConveyorV1 的最后一个版本。如需继续使用，强烈建议迁移至 [MediaConveyorV2](https://github.com/HexStan/MediaConveyorV2)。
+
+### 破坏性变更
+
+- 状态存储路径变更：`logs/state.json` → `data/media-conveyor.db`（SQLite 数据库）。
+- Docker 用户需在 `docker-compose.yml` 中新增 `./data:/app/data` 卷挂载，以确保数据库文件持久化。
+- 文件过滤配置从扩展名列表（`input_formats`/`direct_move_formats`）改为 fnmatch 模式列表（`include_patterns`/`exclude_patterns`/`passthrough_patterns`）。旧配置项已移除且不会自动迁移，需手动转换（见迁移指南）。
+
 ### 新增
 
 - 基于 fnmatch 模式的文件过滤流水线（`[tasks.filter]`）：
@@ -14,24 +26,15 @@
 
 ### 变更
 
-- 状态存储从 JSON 文件迁移至 SQLite 数据库（`data/` 目录），提升数据一致性与查询效率。
+- 项目更名为 MediaConveyor（原 VideoWatchdog）：Docker 镜像地址从 `hexstan/video-watchdog`（Docker Hub）变更为 `ghcr.io/hexstan/mediaconveyor`。
+- 运行环境要求提升为 Python 3.14+，依赖安装方式从 `pip install -r requirements.txt` 改为 `uv sync`（Python 可由 uv 托管，无需单独安装）。
 - 未配置任何文件名过滤条件时，程序默认处理源目录中的所有文件（此前默认仅处理 `.mp4` 文件）。
-
-### 移除
-
-- 配置项 `input_formats` 和 `direct_move_formats` 已移除，由 `include_patterns` 和 `passthrough_patterns` 取代。
-
-### 破坏性变更
-
-- 状态文件路径变更：`logs/state.json` → `data/` 目录下的 SQLite 数据库。
-- Docker 用户需在 `docker-compose.yml` 中新增 `./data:/app/data` 卷挂载，以确保数据库文件持久化。
-- 文件过滤配置从扩展名列表（`input_formats`/`direct_move_formats`）改为 fnmatch 模式列表（`include_patterns`/`exclude_patterns`/`passthrough_patterns`）。旧配置项不会自动迁移，需手动转换（见迁移指南）。
 
 ### 迁移指南
 
 #### 1. 状态存储迁移
 
-本版本不再提供自动数据迁移。v4.x 及更早版本的 JSON 状态数据（`logs/state.json`）不会迁移至 SQLite，首次启动时视为全新状态，所有文件将被重新扫描，此前的失败计数与处理成功时间记录将丢失。
+本版本不再提供自动数据迁移。v4.x 及更早版本的 JSON 状态数据（`logs/state.json`）不会迁移至 SQLite 数据库（`data/media-conveyor.db`），首次启动时视为全新状态，所有文件将被重新扫描，此前的失败计数与处理成功时间记录将丢失。
 
 #### 2. 文件过滤配置迁移
 
@@ -59,9 +62,11 @@ include_patterns = ["*.mp4"]
 
 #### 3. Docker 用户
 
-需在 `docker-compose.yml` 中新增 `data` 卷挂载：
+镜像地址变更为 `ghcr.io/hexstan/mediaconveyor`，请更新 `docker-compose.yml` 中的 `image`，并新增 `data` 卷挂载：
 
 ```yaml
+image: ghcr.io/hexstan/mediaconveyor:latest
+
 volumes:
   - ./config:/app/config
   - ./data:/app/data      # 新增此行
@@ -283,3 +288,7 @@ source_dir = "/custom/source"
 ## [1.0.0] - 2026-03-17
 
 - 首次发布 Realease。
+
+---
+
+[8.0.0]: https://github.com/HexStan/MediaConveyor/releases/tag/v8.0.0
