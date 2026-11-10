@@ -292,3 +292,10 @@ source_dir = "/custom/source"
 ---
 
 [8.0.0]: https://github.com/HexStan/MediaConveyor/releases/tag/v8.0.0
+[4.0.0]: https://github.com/HexStan/MediaConveyor/releases/tag/v4.0.0
+[3.0.0]: https://github.com/HexStan/MediaConveyor/releases/tag/v3.0.0
+[2.0.2]: https://github.com/HexStan/MediaConveyor/releases/tag/v2.0.2
+[2.0.1]: https://github.com/HexStan/MediaConveyor/releases/tag/v2.0.1
+[2.0.0]: https://github.com/HexStan/MediaConveyor/releases/tag/v2.0.0
+[1.0.1]: https://github.com/HexStan/MediaConveyor/releases/tag/v1.0.1
+[1.0.0]: https://github.com/HexStan/MediaConveyor/releases/tag/v1.0.0
