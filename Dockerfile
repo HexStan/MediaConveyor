@@ -61,7 +61,7 @@ WORKDIR /app
 # uv 通过 BuildKit bind mount 从官方镜像临时挂载，仅本条 RUN 期间可见、不落入
 # 任何镜像层（最终镜像不含 uv）；下载缓存经 cache mount 存于构建器而非镜像层
 # （cache 目录按 key 持久复用，重建此层时免重新下载）。钉精确版本，与本地生成
-# uv.lock 的 uv 版本一致，dependabot 不跟踪该引用，升级 uv 重锁后需手动同步此处。
+# uv.lock 的 uv 版本一致，升级 uv 重锁后需手动同步此处。
 # --locked 严格按 uv.lock 安装，锁与 pyproject.toml 不一致时构建失败；
 # --only-group runtime 只装运行依赖组（uv sync 默认会装 dev 组）；
 # --no-install-project 项目无 [build-system]（虚拟项目），显式声明不安装项目本身；

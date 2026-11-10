@@ -1,7 +1,7 @@
 # 复合 action：判断本次推送是否变更了 pyproject.toml 的 version 字段。
 #
 # 背景：版本号唯一出处是 pyproject.toml 的 [project].version，而该文件同时
-# 承载依赖与工具配置，Dependabot 每周更新依赖也会改到它。调用方工作流的
+# 承载依赖与工具配置，依赖升级也会改到它。调用方工作流的
 # paths 过滤只能到文件级，这里进一步比较 version 相对 github.event.before
 # 提交的值，避免依赖更新触发无意义的镜像构建。
 #

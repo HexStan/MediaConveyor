@@ -9,7 +9,7 @@
 #   uv sync --group dev           # runtime + pytest（本地开发与 CI）
 #   uv sync --only-group runtime  # 仅运行依赖（Docker 镜像使用）
 # pip ≥ 25.1 的 `pip install --group <组名>` 亦可安装，但不经过锁文件，仅作后备手段。
-# 所有依赖钉精确版本，由 Dependabot（uv 生态）每周同步更新 pyproject.toml 与 uv.lock。
+# 所有依赖钉精确版本，依赖升级时同步更新 pyproject.toml 与 uv.lock。
 
 [project]
 name = "mediaconveyor"

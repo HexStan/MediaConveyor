@@ -2,12 +2,16 @@ name: Docker Image Publish
 
 on:
   push:
+    # 仅响应分支 push：tag 与分支指向同一提交并一起推送时，tag push 会因
+    # 该提交包含 pyproject.toml 变更而再次触发，导致同一镜像被重复构建两次。
+    branches:
+      - '**'
     paths:
       - 'pyproject.toml'
   workflow_dispatch:
 
 jobs:
-  # pyproject.toml 同时承载依赖与工具配置（Dependabot 每周更新），
+  # pyproject.toml 同时承载依赖与工具配置，
   # 仅当 version 字段相对上次推送实际变化时才构建镜像
   check:
     runs-on: ubuntu-latest
@@ -16,7 +20,7 @@ jobs:
       changed: ${{ steps.version.outputs.changed }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           # version 比较需读取 before 提交的文件内容，fetch-depth: 0 见复合 action 说明
           fetch-depth: 0
@@ -34,16 +38,16 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -66,7 +70,7 @@ jobs:
           echo "tags=$TAGS" >> "$GITHUB_OUTPUT"
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: Dockerfile
